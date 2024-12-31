@@ -292,7 +292,7 @@ async function respond(API_KEY,chat,interface){
         const reply=document.createElement('div');
         reply.className='AI-chatbox';
         console.log(generatedText);
-        reply.innerHTML= renderMarkdown(generatedText);
+        reply.innerHTML= marked.parse(generatedText);
         interface.appendChild(reply);
         // interface.scrollTop=interface.scrollHeight;
 
