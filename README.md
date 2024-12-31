@@ -1,4 +1,4 @@
-# Chrome-Extension-Base-Template
+# AZ Problem Solver
 This is a Chrome extension providing an AI chatbot for assisting with and solving problems on the https://maang.in website.
 
 ## Features
@@ -7,7 +7,7 @@ This is a Chrome extension providing an AI chatbot for assisting with and solvin
 - Markdown Support provided for AI-response, increasing it's readability and responsiveness.
 
 ## Author
-First Last
+Rishav Chowdhury
 - [Author Website](https://www.linkedin.com/in/rishav-chowdhury-81b652295/)
 - [Author Github](https://github.com/GODSPEED482)
 - [Project Repository]()
