@@ -18,76 +18,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-function escapeHTML(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
 
-function renderMarkdown(text) {
-    const lines = text.split('\n'); // Split input into lines for processing
-    const result = [];
-
-    for (const line of lines) {
-        let htmlLine = escapeHTML(line); // Escape special HTML characters
-
-        // Heading 1, 2, 3 based on starting # symbols
-        if (htmlLine.startsWith('### ')) {
-            htmlLine = `<h3>${htmlLine.slice(4)}</h3>`;
-        } else if (htmlLine.startsWith('## ')) {
-            htmlLine = `<h2>${htmlLine.slice(3)}</h2>`;
-        } else if (htmlLine.startsWith('# ')) {
-            htmlLine = `<h1>${htmlLine.slice(2)}</h1>`;
-        }
-
-        // Inline code wrapped in backticks
-        if (htmlLine.includes('`')) {
-            const parts = htmlLine.split('`');
-            for (let i = 1; i < parts.length; i += 2) {
-                parts[i] = `<code style="color: #ADD8E6;">${parts[i]}</code>`;
-            }
-            htmlLine = parts.join('');
-        }
-
-        // Bold (**text**)
-        while (htmlLine.includes('**')) {
-            const start = htmlLine.indexOf('**');
-            const end = htmlLine.indexOf('**', start + 2);
-            if (end !== -1) {
-                const boldText = htmlLine.slice(start + 2, end);
-                htmlLine =
-                    htmlLine.slice(0, start) +
-                    `<strong>${boldText}</strong>` +
-                    htmlLine.slice(end + 2);
-            } else {
-                break; // Exit if no closing '**' is found
-            }
-        }
-
-        // Italics (*text*)
-        while (htmlLine.includes('*')) {
-            const start = htmlLine.indexOf('*');
-            const end = htmlLine.indexOf('*', start + 1);
-            if (end !== -1) {
-                const italicText = htmlLine.slice(start + 1, end);
-                htmlLine =
-                    htmlLine.slice(0, start) +
-                    `<em>${italicText}</em>` +
-                    htmlLine.slice(end + 1);
-            } else {
-                break; // Exit if no closing '*' is found
-            }
-        }
-
-        // Add <br> for line breaks
-        result.push(htmlLine);
-    }
-
-    return result.join('<br>');
-}
 const link = document.createElement('link');
 
 // Set the attributes for the <link> element
