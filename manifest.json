@@ -43,7 +43,8 @@
         "styles.css",
         "assets/algozenith_logo.png",
         "assets/AZ1.png",
-        "popup.js"
+        "popup.js",
+        "inject.js"
       ],
       "matches" : ["<all_urls>"]
     }

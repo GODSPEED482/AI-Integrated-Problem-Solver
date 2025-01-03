@@ -1,5 +1,14 @@
 // Global variable
-globalVariable = '';
+let globalVariable = '';
+window.addEventListener('load', () => {
+   if(!document.getElementById('Inject')){
+        const scr = document.createElement('script');
+        scr.src = chrome.runtime.getURL('inject.js');
+        scr.id = 'Inject';
+        document.head.appendChild(scr);
+        console.log('Appended index.js')
+   } 
+});
 window.addEventListener('load',chkLoggedIn());
 function chkLoggedIn(){
     chrome.storage.local.get(['API_KEY'],async (result) => {
@@ -53,6 +62,7 @@ const observer = new MutationObserver((mutations) => {
                     cb=false;
                     addchatbox();
                 }
+
            }
            else{
                 cb=true;            
