@@ -164,7 +164,7 @@ function addchatbox(){
             modal.style.display = 'none';
             ovr.style.display = 'none';
         });
-        sendbutton.addEventListener('click',() => {
+        sendbutton.addEventListener('click',async () => {
             if(txt.value.trim() === ''){
                 console.log("Empty");
             }
@@ -176,11 +176,15 @@ function addchatbox(){
                 txt.value = '';
                 interface.appendChild(chat);
                 interface.scrollTop = interface.scrollHeight;
-                respond(chat,interface);
+
+                const reply=document.createElement('div');
+                reply.className='AI-chatbox';
+                reply.innerHTML= marked.parse(await respond(API_KEY,chat,interface));
+                interface.appendChild(reply);
             }
         });
         
-        txt.addEventListener('keydown', (event) => {
+        txt.addEventListener('keydown', async (event) => {
             const API_KEY = globalVariable;
             if (event.key === 'Enter' && !event.shiftKey){
                 event.preventDefault();
@@ -200,7 +204,12 @@ function addchatbox(){
                     txt.value = '';
                     interface.appendChild(chat);
                     interface.scrollTop = interface.scrollHeight;
-                    respond(API_KEY,chat,interface);
+                    
+                    const reply=document.createElement('div');
+                    reply.className='AI-chatbox';
+
+                    reply.innerHTML= marked.parse(await respond(API_KEY,chat,interface));
+                    interface.appendChild(reply);
                 }
             }
         });
@@ -237,13 +246,9 @@ async function respond(API_KEY,chat,interface){
         const data = await response.json();
         console.log(data.contents?.[0]?.parts?.[0]?.text);
         const generatedText = data.candidates?.[0]?.content.parts?.[0]?.text || "No response from API.";
+
+        return generatedText;
         
-        const reply=document.createElement('div');
-        reply.className='AI-chatbox';
-        console.log(generatedText);
-        reply.innerHTML= marked.parse(generatedText);
-        interface.appendChild(reply);
-        // interface.scrollTop=interface.scrollHeight;
 
       } catch (error) {
         
