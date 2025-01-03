@@ -26,9 +26,7 @@ document.getElementById('sendButton').addEventListener('click', async () => {
     await removePleaseWait();
     alert('Log in successful!!');
     // Send message to content script
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'updateVariable', value: inputValue });
-    });
+   
     chrome.storage.local.set({'API_KEY':[inputValue]},() =>{
       console.log('Login successful!!');
     });
@@ -50,9 +48,7 @@ document.getElementById('inputValue').addEventListener('keydown', async (event) 
         await removePleaseWait();
         alert('Log in successful!!');
         // Send message to content script
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, { action: 'updateVariable', value: inputValue });
-        });
+       
         chrome.storage.local.set({'API_KEY':[inputValue]},() =>{
           console.log('Login successful!!');
         });

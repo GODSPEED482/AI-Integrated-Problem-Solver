@@ -10,13 +10,7 @@ function chkLoggedIn(){
       });
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'updateVariable') {
-    globalVariable = message.value;
-    console.log('Global variable updated:', globalVariable);
-    sendResponse({ status: 'success' });
-  }
-});
+
 
 
 const link = document.createElement('link');
