@@ -26,7 +26,10 @@ document.getElementById('sendButton').addEventListener('click', async () => {
     await removePleaseWait();
     alert('Log in successful!!');
     // Send message to content script
-   
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if(tabs[0] && tabs[0].url && tabs[0].url.startsWith('https://maang.in'))
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'updateVariable', value: inputValue });
+    });
     chrome.storage.local.set({'API_KEY':[inputValue]},() =>{
       console.log('Login successful!!');
     });
@@ -48,7 +51,10 @@ document.getElementById('inputValue').addEventListener('keydown', async (event) 
         await removePleaseWait();
         alert('Log in successful!!');
         // Send message to content script
-       
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if(tabs[0] && tabs[0].url && tabs[0].url.startsWith('https://maang.in'))
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'updateVariable', value: inputValue });
+        });
         chrome.storage.local.set({'API_KEY':[inputValue]},() =>{
           console.log('Login successful!!');
         });
@@ -146,7 +152,10 @@ document.getElementById('Logout').addEventListener('click',() => {
   chrome.storage.local.remove('API_KEY', () => {
 
   });
-  
+
+   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if(tabs[0] && tabs[0].url && tabs[0].url.startsWith('https://maang.in')) chrome.tabs.sendMessage(tabs[0].id, { action: 'LoggedOut' });
+  });
   parent.removeChild(parent.firstChild);
   parent.style.display= 'none';
 });
