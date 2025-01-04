@@ -2,6 +2,7 @@
 This is a Chrome extension providing an AI chatbot for assisting with and solving problems on the https://maang.in website.
 
 ## Features
+- Interactive Chat.
 - Responsive Design.
 - Integrated with Gemini API.
 - Markdown Support provided for AI-response, increasing it's readability and responsiveness.

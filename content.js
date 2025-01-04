@@ -1,5 +1,8 @@
+
+
 // Global variable
 let globalVariable = '';
+
 window.addEventListener('load', () => {
    if(!document.getElementById('Inject')){
         const scr = document.createElement('script');
@@ -10,6 +13,7 @@ window.addEventListener('load', () => {
    } 
 });
 window.addEventListener('load',chkLoggedIn());
+
 function chkLoggedIn(){
     chrome.storage.local.get(['API_KEY'],async (result) => {
           if(result.API_KEY===undefined){
@@ -72,13 +76,15 @@ const observer = new MutationObserver((mutations) => {
                 // console.log("heloo");
                 addAIHelpButton();   
                 if(cb){
-                    cb=false;
+                    cb = false;
                     addchatbox();
+                }
+                else{
                 }
                 
             }
             else{
-                cb=true;            
+                cb = true;            
             }
         }
     }
@@ -91,7 +97,8 @@ observer.observe(document.body, {
 });
 
 
-function addchatbox(){
+async function addchatbox(){
+    
     
     const modal=document.createElement('div');
     modal.className='modal';
@@ -125,7 +132,7 @@ function addchatbox(){
     textarea.id='customTextarea';
     textarea.placeholder='Ask your Doubt';
     chatbox.appendChild(textarea);
-
+    
     const sendbutton=document.createElement('button');
     sendbutton.className='send get-help';
     sendbutton.id='send';
@@ -150,7 +157,9 @@ function addchatbox(){
         const sendbutton=document.getElementById('send');
         const interface=document.getElementById('interface');
         
-        AIHelButton.addEventListener('click',() => {
+        AIHelButton.addEventListener('click',async () => {
+            interface.innerHTML='';
+            await loadChatHistoryByID(getCurrentProblemID(),1);
             chkLoggedIn();
             modal.style.display = 'flex';
             ovr.style.display = 'flex';
@@ -177,9 +186,18 @@ function addchatbox(){
                 interface.appendChild(chat);
                 interface.scrollTop = interface.scrollHeight;
 
+                let chatHistory =await loadChatHistoryByID(getCurrentProblemID(),0);
+                let newobject = {role: "user", parts:[{text: chat.innerText}]};
+                chatHistory.push(newobject);
+
                 const reply=document.createElement('div');
                 reply.className='AI-chatbox';
-                reply.innerHTML= marked.parse(await respond(API_KEY,chat,interface));
+                let AI_reply = (await respond(API_KEY,chatHistory));
+                reply.innerHTML = marked.parse(AI_reply);
+
+                newobject = {role: "model" , parts:[{text: AI_reply}]};
+                chatHistory.push(newobject);
+                updateChatHistory(chatHistory,getCurrentProblemID());
                 interface.appendChild(reply);
             }
         });
@@ -205,28 +223,34 @@ function addchatbox(){
                     interface.appendChild(chat);
                     interface.scrollTop = interface.scrollHeight;
                     
+                    
+                    let chatHistory =await loadChatHistoryByID(getCurrentProblemID(),0);
+                    let newobject = {role: "user", parts:[{text: chat.innerText}]};
+                    chatHistory.push(newobject);
+                    
                     const reply=document.createElement('div');
                     reply.className='AI-chatbox';
-
-                    reply.innerHTML= marked.parse(await respond(API_KEY,chat,interface));
+                    let AI_reply= await respond(API_KEY,chatHistory);
+                    reply.innerHTML = marked.parse(AI_reply);
+                    
+                    
+                    newobject = {role: "model" , parts:[{text: AI_reply}]};
+                    chatHistory.push(newobject);
+                    updateChatHistory(chatHistory,getCurrentProblemID());
                     interface.appendChild(reply);
                 }
             }
         });
         
     }
-};
+}
 
-async function respond(API_KEY,chat,interface){
+async function respond(API_KEY,chatHistory){
     console.log("fa");
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
     
     const payload = {
-        contents: [
-            {
-                parts: [{ text: chat.innerText}]
-            }
-        ]
+        contents: chatHistory
     };
     
     try {
@@ -255,4 +279,61 @@ async function respond(API_KEY,chat,interface){
         alert(`Error: ${error.message}`);
       }
 
+}
+
+function getCurrentProblemID(){
+    let p = window.location.href;
+    let end = p.indexOf('?');
+    let start=0;
+    let noquerystring = p. substring(start,end);
+    end = noquerystring.length;
+    start = noquerystring.lastIndexOf('-') + 1;
+    let ID = noquerystring.substring(start,end);
+    console.log(`current problemID is ${ID}`);
+    return ID;
+}
+
+function loadChatHistoryByID(ID, det = 0) {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get(['chatHistory'], (result) => {
+            const chatHistory = result.chatHistory || {};
+            const CurrentArray = chatHistory[ID] || [];
+
+            if (det) {
+                CurrentArray.forEach((chat) => {
+                    appendChat(chat);
+                });
+            }
+
+            console.log(`Loaded chat history for ID: ${ID}`);
+            resolve(CurrentArray); // Return the array via Promise
+        });
+    });
+}
+
+
+
+function appendChat(chat){
+    const interface = document.getElementById('interface');
+    const newchat= document.createElement('div');
+
+    if(chat.role === 'user') newchat.className = 'user-chatbox';
+    else newchat.className = 'AI-chatbox';
+    newchat.innerHTML = marked.parse(chat.parts[0].text);
+    
+    interface.appendChild(newchat);
+}
+
+function intializeChat(CurrentArray){
+    if(CurrentArray.length === 0){
+    }
+}
+
+function updateChatHistory(CurrentArray,ID){
+    chrome.storage.sync.get(['chatHistory'],(result) => {
+        let chatHist = result.chatHistory||new Map();
+        chatHist[ID] = CurrentArray;
+
+        chrome.storage.sync.set({'chatHistory': chatHist},() =>{});
+    });
 }
