@@ -28,7 +28,7 @@ XMLHttpRequest.prototype.send = function (body) {
 
     // Add an event listener to log the response
     this.addEventListener("load", function () {
-      console.log("Response for specific URL:", this.responseText);
+      console.log("Response for specific URL:", JSON.parse(this.responseText).data );
     });
   }
 
