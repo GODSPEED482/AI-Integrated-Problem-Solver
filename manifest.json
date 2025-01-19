@@ -4,49 +4,28 @@
   "version": "0.1",
   "author": "Rishav Chowdhury",
   "description": "Solve any doubts/queries with the help of this extension, which is AI integrated",
-  "permissions": [
-    "storage",
-    "tabs",
-    "activeTab",
-    "scripting",
-    "webRequest"
-  ],
-  "host_permissions": [
-  
-  ],
+  "permissions": ["storage", "tabs", "activeTab", "scripting", "webRequest"],
+  "host_permissions": [],
 
   "content_scripts": [
     {
-      "matches": [
-        "https://maang.in/*"
-      ],
-      "js": [
-       
-        "content.js",
-        "marked.min.js"
-      ]
+      "matches": ["https://maang.in/*"],
+      "js": ["content.js", "marked.min.js"]
     }
   ],
   "background": {
     "service_worker": "background.js"
   },
-  
-  "web_accessible_resources" : [
+
+  "web_accessible_resources": [
     {
       "resources": [
-        "assets/bookmark.png",
-        "assets/delete.png",
-        "assets/edit.png",
-        "assets/ext-icon.png",
-        "assets/play.png",
-        "assets/save.png",
         "styles.css",
-        "assets/algozenith_logo.png",
         "assets/AZ1.png",
         "popup.js",
         "inject.js"
       ],
-      "matches" : ["<all_urls>"]
+      "matches": ["<all_urls>"]
     }
   ],
   "action": {
