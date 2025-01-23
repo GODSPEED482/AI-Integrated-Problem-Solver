@@ -79,7 +79,8 @@ const observer = new MutationObserver((mutations) => {
                     addchatbox();
                 } else {
                 }
-            } else {
+            } else if(!cb){
+                removechatbox();
                 cb = true;
             }
         }
@@ -158,10 +159,22 @@ async function addchatbox() {
     chatbox.appendChild(textarea);
 
     const sendbutton = document.createElement("button");
-    sendbutton.className = "send get-help";
+    sendbutton.className = "send get-help-dark";
     sendbutton.id = "send";
-    sendbutton.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 511 512.32"><path fill="#fff" d="M9.72 185.88L489.19 1.53c3.64-1.76 7.96-2.08 12.03-.53 7.83 2.98 11.76 11.74 8.78 19.57L326.47 502.56h-.02c-1.33 3.49-3.94 6.5-7.57 8.25-7.54 3.63-16.6.47-20.23-7.06l-73.78-152.97 146.67-209.97-209.56 146.3L8.6 213.64a15.117 15.117 0 01-7.6-8.25c-2.98-7.79.93-16.53 8.72-19.51z"/></svg>';
+    sendbutton.innerHTML  = 
+    `<span style= "color: rgb(22,29,41); height: 100%; width: 100%" >
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink"  viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <title>send-solid</title>
+        <g id="Layer_2" data-name="Layer 2">
+            <g id="invisible_box" data-name="invisible box">
+            <rect width="48" height="48" fill="none"/>
+            </g>
+            <g id="icons_Q2" data-name="icons Q2">
+            <path fill="currentColor" d="M44.9,23.2l-38-18L6,5A2,2,0,0,0,4,7L9.3,23H24a2.1,2.1,0,0,1,2,2,2,2,0,0,1-2,2H9.3L4,43a2,2,0,0,0,2,2l.9-.2,38-18A2,2,0,0,0,44.9,23.2Z"/>
+            </g>
+        </g>
+        </svg>
+    </span>`
     chatbox.appendChild(sendbutton);
 
     modal.appendChild(chatbox);
@@ -183,6 +196,7 @@ async function addchatbox() {
         const interface = document.getElementById("interface");
 
         AIHelButton.addEventListener("click", async () => {
+            setaria_checked(modal, 'false');
             interface.innerHTML = "";
             await loadChatHistoryByID(getCurrentProblemID(), 1);
             chkLoggedIn();
@@ -286,9 +300,17 @@ function appendChat(chat) {
     const interface = document.getElementById("interface");
     const newchat = document.createElement("div");
 
-    if (chat.role === "user") newchat.className = "user-chatbox";
-    else newchat.className = "AI-chatbox";
-    newchat.innerHTML = marked.parse(chat.parts[0].text);
+    if (chat.role === "user"){
+        newchat.className = "user-chatbox";
+        newchat.innerHTML = chat.parts[0].text;
+    } 
+    else{
+        newchat.className = "AI-chatbox";
+        newchat.innerHTML = marked.parse(chat.parts[0].text);
+    }
+
+    let arc = interface.getAttribute('aria-checked')
+    newchat.setAttribute('aria-checked' , arc)
 
     interface.appendChild(newchat);
 }
@@ -305,4 +327,18 @@ function updateChatHistory(CurrentArray, ID) {
 
         chrome.storage.sync.set({ chatHistory: chatHist }, () => { });
     });
+}
+
+function removechatbox(){
+    document.getElementById('modal').remove();
+    document.getElementById('overlay').remove();
+}
+
+function setaria_checked(div, str) {
+  div.setAttribute("aria-checked", str);
+  div.childNodes.forEach((child) => {
+    if(child.nodeType !== Node.TEXT_NODE){
+        setaria_checked(child , str);
+    }
+  });
 }
