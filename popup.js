@@ -1,4 +1,4 @@
-window.addEventListener("load", chkLoggedIn());
+window.addEventListener("load", chkLoggedIn);
 
 function chkLoggedIn() {
   chrome.storage.local.get(["API_KEY"], async (result) => {

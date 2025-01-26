@@ -2,6 +2,9 @@
 let p = window.location.href;
 const originalSend = XMLHttpRequest.prototype.send;
 
+
+
+
 // Use a MutationObserver to detect route changes or DOM updates
 const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
@@ -10,6 +13,18 @@ const observer = new MutationObserver((mutations) => {
     }
   }
 });
+
+function getCurrentProblemID() {
+  let p = window.location.href;
+  let end = p.indexOf("?");
+  let start = 0;
+  let noquerystring = p.substring(start, end);
+  end = noquerystring.length;
+  start = noquerystring.lastIndexOf("-") + 1;
+  let ID = noquerystring.substring(start, end);
+  console.log(`current problemID is ${ID}`);
+  return ID;
+}
 
 // Start observing the body for changes
 observer.observe(document.body, {
@@ -28,7 +43,11 @@ XMLHttpRequest.prototype.send = function (body) {
 
     // Add an event listener to log the response
     this.addEventListener("load", function () {
-      console.log("Response for specific URL:", JSON.parse(this.responseText).data );
+      let package = {
+        action: 'get-info',
+        value:  JSON.parse(this.responseText).data
+      }
+      window.postMessage(package);
     });
   }
 
