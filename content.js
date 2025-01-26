@@ -419,7 +419,7 @@ The following text delimited by triple inverted commas provides your task, your 
 	-When asked for solution You must not provide code directly, but provide hints first and finally solution if they exist and are non-empty followed by code.
 	-You must see if the solution code is written in same language as provided by the 'user' in his prompt, if such a code does not exist in the solution-code, you must generate your own code with the same logic as the codes in the 'Solution Code' section.
 	-Also check that the language mentioned by 'user' exists within the 'Languages' section. If it does not.. respond to it with a text similar to following delimited by angular braces:
-	{Sorry , But providing a code in this language might not help you with your CP grind..}
+	'Sorry , But providing a code in this language might not help you with your CP grind..'
 '''
 
 
