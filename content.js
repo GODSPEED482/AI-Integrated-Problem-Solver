@@ -344,11 +344,6 @@ function loadChatHistoryByID(ID, det = 0) {
     });
 }
 
-function escapeHTML(str) {
-    const div = document.createElement('div');
-    div.textContent = str; // Assigning textContent escapes HTML
-    return div.innerHTML;
-}
 
 function appendChat(chat) {
     const interface = document.getElementById("interface");
@@ -486,4 +481,3 @@ async function DeleteChat(){
 
 
 }
-
