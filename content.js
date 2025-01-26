@@ -76,26 +76,47 @@ function addAIHelpButton() {
         AIHelpButton.textContent = "AI Help";
 
         RunButton.insertAdjacentElement("afterend", AIHelpButton);
+        AIHelpButton.addEventListener("click", async () => {
+            const modal = document.getElementById("modal");
+            const ovr = document.getElementById("overlay");
+            const interface = document.getElementById("interface");
+            interface.innerHTML = "";
+            let theme = document.getElementsByClassName('ant-switch d-flex mt-1 css-19gw05y')[0];
+            setaria_checked(modal, theme.getAttribute('aria-checked'));
+            addDeleteChatButton();
+            await loadChatHistoryByID(getCurrentProblemID(), 1);
+            chkLoggedIn();
+            modal.style.display = "flex";
+            ovr.style.display = "flex";
+            interface.scrollTop = interface.scrollHeight;
+        });
     }
 }
+
+let gl = '';
+let pl = '';
 
 // Use a MutationObserver to detect route changes or DOM updates
 const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
         if (mutation.type === "childList" || mutation.type === "subtree") {
-            let pl = location.href;
+            gl = pl;
+            pl = location.href;
             if (
                 pl.startsWith("https://maang.in/problems/") &&
                 pl.length > "https://maang.in/problems/".length
             ) {
-                addAIHelpButton();
-                if (cb) {
+                if (!document.getElementById('modal')) {
+                    console.log('chatbox added');
+                    
                     cb = false;
                     addchatbox();
-                } else {
-                }
-            } else if(!cb){
+                } 
+                console.log('mutation observed')
+                addAIHelpButton();
+            } else if( document.getElementById('modal')){
                 removechatbox();
+                removeButton();
                 cb = true;
             }
         }
@@ -107,6 +128,11 @@ observer.observe(document.body, {
     childList: true,
     subtree: true,
 });
+
+function removeButton(){
+    const el = document.getElementById('AIHD1001');
+    if(el) el.remove();
+}
 
 async function pushchat(txt, interface) {
     const API_KEY = globalVariable; // Use globalVariable here
@@ -137,7 +163,8 @@ async function pushchat(txt, interface) {
     appendChat(newobject);
 }
 
-async function addchatbox() {
+function addchatbox() {
+    console.log('addchatbox inside');
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.id = "modal";
@@ -199,34 +226,18 @@ async function addchatbox() {
     overlay.id = "overlay";
     document.body.prepend(overlay);
     
-    const AIHelButton = document.getElementById("AIHD1001");
-    if (AIHelButton !== null) {
-        console.log("fe");
-        const modal = document.getElementById("modal");
-        const closePopupBtn = document.getElementById("close");
-        const ovr = document.getElementById("overlay");
-        const txt = document.getElementById("customTextarea");
-        const sendbutton = document.getElementById("send");
-        const interface = document.getElementById("interface");
+   
+
         
-        AIHelButton.addEventListener("click", async () => {
-            let theme = document.getElementsByClassName('ant-switch d-flex mt-1 css-19gw05y')[0];
-            setaria_checked(modal, theme.getAttribute('aria-checked'));
-            interface.innerHTML = "";
-            await loadChatHistoryByID(getCurrentProblemID(), 1);
-            chkLoggedIn();
-            modal.style.display = "flex";
-            ovr.style.display = "flex";
-            interface.scrollTop = interface.scrollHeight;
-            await addDeleteChatButton();
-        });
-        ovr.addEventListener("click", () => {
+    const closePopupBtn = document.getElementById("close");
+    const txt = document.getElementById("customTextarea");
+        overlay.addEventListener("click", () => {
             modal.style.display = "none";
             ovr.style.display = "none";
         });
         closePopupBtn.addEventListener("click", () => {
             modal.style.display = "none";
-            ovr.style.display = "none";
+            overlay.style.display = "none";
         });
         sendbutton.addEventListener("click", async () => {
             if (txt.value.trim() === "") {
@@ -246,7 +257,7 @@ async function addchatbox() {
                 }
             }
         });
-    }
+        console.log('added Event Listener');
 }
 
 async function respond(API_KEY, chatHistory) {
@@ -368,7 +379,7 @@ function setaria_checked(div, str) {
   });
 }
 
-async function addDeleteChatButton(){
+function addDeleteChatButton(){
     const interface = document.getElementById('interface');
     if(document.getElementById('DelChat') === null){
 
@@ -376,10 +387,9 @@ async function addDeleteChatButton(){
         DCbttn.id = 'DelChat'
         DCbttn.style.cssText = 
         `position: fixed; bottom:min(150px,20%); right: min(100px,5%);` 
-        
         DCbttn.innerHTML = `<button type="button" class="ant-btn css-19gw05y ant-btn-default Button_gradient_light_button__ZDAR_ coding_ask_doubt_button__FjwXJ gap-1 py-2 px-3 overflow-hidden" style="height: fit-content;"><svg class="svg-icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M800 256h-576a30.08 30.08 0 0 0-32 32 30.08 30.08 0 0 0 32 32H256v576a64 64 0 0 0 64 64h384a64 64 0 0 0 64-64V320h32a30.08 30.08 0 0 0 32-32 30.08 30.08 0 0 0-32-32zM448 799.36a33.28 33.28 0 0 1-64 0v-384a33.28 33.28 0 0 1 64 0z m192 0a33.28 33.28 0 0 1-64 0v-384a33.28 33.28 0 0 1 64 0zM800 128H640v-32a32.64 32.64 0 0 0-32-32h-192a32 32 0 0 0-32 32V128H224a30.08 30.08 0 0 0-32 32 30.08 30.08 0 0 0 32 32h576a30.08 30.08 0 0 0 32-32 30.08 30.08 0 0 0-32-32z"  /></svg><span class="coding_ask_doubt_gradient_text__FX_hZ">Delete Chat</span></button>`;
         interface.appendChild(DCbttn);
-        console.log('Appended delete chat button');
+        console.log('Appended delete chat button', interface);
         DCbttn.addEventListener('click',DeleteChat);
         DCbttn.addEventListener('click',() =>{
             while(interface.firstChild.nextElementSibling !== null){

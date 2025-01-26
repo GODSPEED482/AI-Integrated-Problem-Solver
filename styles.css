@@ -316,6 +316,6 @@
 .chatbox textarea[aria-checked = 'false']{
   background-color: #fff;
   color: #2e3440;
-  border: 0.01rem solid #ddf6ff;
+  border: 0.1rem solid #ddf6ff;
 }
 
