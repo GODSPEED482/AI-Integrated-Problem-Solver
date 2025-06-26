@@ -1,4 +1,4 @@
-# AZ Problem Solver
+# vGPT: Your Personal AI-Integrated AZ-Problem Solver
 This is a Chrome extension providing an AI chatbot for assisting with and solving problems on the https://maang.in website.
 
 ## Features
